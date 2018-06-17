@@ -10,9 +10,17 @@ const { generateMessage, generateLocationMessage } = require('./message');
 //   }
 // };
 
-global.Date = jest.fn(() => ({
-  getTime: jest.fn(() => 12345),
-}));
+// global.Date = jest.fn(() => ({
+//   getTime: jest.fn(() => 12345),
+// }));
+
+jest.mock('moment', () => {
+  return jest.fn(() => {
+    return {
+      valueOf: jest.fn(() => 12345),
+    };
+  });
+});
 
 describe('Generate Message', () => {
   test('should generate correct message object', () => {
