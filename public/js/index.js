@@ -1,36 +1,55 @@
 var socket = io();
+
+function scrollToBottom() {
+  var messages = jQuery('#messages');
+  var newMessage = messages.children('li:last-child');
+
+  var clientHeight = messages.prop('clientHeight');
+  var scrollTop = messages.prop('scrollTop');
+  var scrollHeight = messages.prop('scrollHeight');
+  var newMessageHeight = newMessage.innerHeight();
+  var lastMessageHeight = newMessage.prev().innerHeight();
+
+  if (
+    clientHeight + scrollTop + newMessageHeight + lastMessageHeight >=
+    scrollHeight
+  ) {
+    messages.scrollTop(scrollHeight);
+  }
+}
+
 socket.on('connect', function() {
   console.log('Connected to server');
 });
 
 socket.on('newMessage', function(message) {
-  const formattedTime = moment(message.createdAt).format('h:mm a');
-  const template = jQuery('#message-template').html();
-  const html = Mustache.render(template, {
+  var formattedTime = moment(message.createdAt).format('h:mm a');
+  var template = jQuery('#message-template').html();
+  var html = Mustache.render(template, {
     from: message.from,
     text: message.text,
     createdAt: formattedTime,
   });
   jQuery('#messages').append(html);
-
-  // const li = jQuery('<li></li>');
+  scrollToBottom();
+  // var li = jQuery('<li></li>');
   // li.text(`${message.from} ${formattedTime}: ${message.text}`);
   // jQuery('#messages').append(li);
 });
 
 socket.on('newLocationMessage', function(message) {
-  const formattedTime = moment(message.createdAt).format('h:mm a');
+  var formattedTime = moment(message.createdAt).format('h:mm a');
 
-  const template = jQuery('#location-message-template').html();
-  const html = Mustache.render(template, {
+  var template = jQuery('#location-message-template').html();
+  var html = Mustache.render(template, {
     from: message.from,
     url: message.url,
     createdAt: formattedTime,
   });
   jQuery('#messages').append(html);
-
-  // const li = jQuery('<li></li>');
-  // const a = jQuery('<a target= "_blank">my current location</a>');
+  scrollToBottom();
+  // var li = jQuery('<li></li>');
+  // var a = jQuery('<a target= "_blank">my current location</a>');
   // a.attr('href', message.url);
   // li.text(`${message.from} ${formattedTime}: `);
   // li.append(a);
